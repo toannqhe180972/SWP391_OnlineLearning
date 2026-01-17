@@ -63,6 +63,11 @@ public class User {
     private LocalDateTime linkedAt;
 
     @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private UserStatus status = UserStatus.ACTIVE;
+
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
