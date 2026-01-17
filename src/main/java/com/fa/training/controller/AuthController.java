@@ -32,20 +32,29 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registerUser(@RequestParam String username, @RequestParam String password,
-            @RequestParam String email, @RequestParam String fullName,
-            Model model) {
+            @RequestParam String email, @RequestParam String firstName,
+            @RequestParam String lastName, Model model) {
         if (userRepository.findByUsername(username).isPresent()) {
-            model.addAttribute("error", "Username exists!");
+            model.addAttribute("error", "Username already exists!");
             return "register";
         }
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setEmail(email);
-        user.setFullName(fullName);
-        user.setVerified(false);
+        if (userRepository.findByEmail(email).isPresent()) {
+            model.addAttribute("error", "Email already exists!");
+            return "register";
+        }
+
+        User user = User.builder()
+                .username(username)
+                .password(passwordEncoder.encode(password))
+                .email(email)
+                .firstName(firstName)
+                .lastName(lastName)
+                .provider("LOCAL")
+                .verified(false)
+                .build();
         userRepository.save(user);
-        model.addAttribute("message", "Success! Please login.");
+
+        model.addAttribute("message", "Registration successful! Please login.");
         return "login";
     }
 
@@ -56,7 +65,7 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public String handleResetPassword(@RequestParam String email, Model model) {
-        model.addAttribute("message", "Link sent.");
+        model.addAttribute("message", "Reset link sent (Simulation).");
         return "reset-password";
     }
 }

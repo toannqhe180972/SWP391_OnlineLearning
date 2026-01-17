@@ -50,24 +50,30 @@ public class DataLoader implements CommandLineRunner {
         });
 
         if (userRepository.findByUsername("admin").isEmpty()) {
-            User admin = new User();
-            admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setFullName("System Admin");
-            admin.setEmail("admin@onlinelearning.com");
-            admin.setVerified(true);
-            admin.setRoles(new HashSet<>(Collections.singletonList(adminRole)));
+            User admin = User.builder()
+                    .username("admin")
+                    .password(passwordEncoder.encode("admin123"))
+                    .firstName("System")
+                    .lastName("Admin")
+                    .email("admin@onlinelearning.com")
+                    .verified(true)
+                    .provider("LOCAL")
+                    .roles(new HashSet<>(Collections.singletonList(adminRole)))
+                    .build();
             userRepository.save(admin);
         }
 
         if (userRepository.findByUsername("user").isEmpty()) {
-            User user = new User();
-            user.setUsername("user");
-            user.setPassword(passwordEncoder.encode("user123"));
-            user.setFullName("Regular User");
-            user.setEmail("user@onlinelearning.com");
-            user.setVerified(true);
-            user.setRoles(new HashSet<>(Collections.singletonList(userRole)));
+            User user = User.builder()
+                    .username("user")
+                    .password(passwordEncoder.encode("user123"))
+                    .firstName("Regular")
+                    .lastName("User")
+                    .email("user@onlinelearning.com")
+                    .verified(true)
+                    .provider("LOCAL")
+                    .roles(new HashSet<>(Collections.singletonList(userRole)))
+                    .build();
             userRepository.save(user);
         }
 

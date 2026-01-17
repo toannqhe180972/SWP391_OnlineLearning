@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px;">
+        <h2 style="color: #4f46e5;">Welcome to Online Learning!</h2>
+        <p>Hi,</p>
+        <p>You have successfully registered via Google OAuth2. Below are your account details generated automatically:
+        </p>
+        <div style="background: #f4f4f4; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <p><strong>Username:</strong> <span th:text="${username}"></span></p>
+            <p><strong>Random Password:</strong> <span th:text="${password}"></span></p>
+        </div>
+        <p>We recommend you to change your password after logging in for the first time.</p>
+        <p>Best regards,<br>The SWP391 Team</p>
+    </div>
+</body>
+
+</html>

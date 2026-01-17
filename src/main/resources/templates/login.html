@@ -17,6 +17,13 @@
             <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
             <button type="submit" class="btn btn-primary" style="width:100%;">Sign In</button>
         </form>
+        <div style="margin: 1rem 0; text-align: center; color: #64748b;">OR</div>
+        <a th:href="@{/oauth2/authorization/google}" class="btn"
+            style="width: 100%; display: block; border: 1px solid #e2e8f0; text-align: center; background: white;">
+            <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google"
+                style="width: 18px; vertical-align: middle; margin-right: 8px;">
+            Sign in with Google
+        </a>
         <p style="text-align:center; margin-top:1rem;">Don't have an account? <a th:href="@{/register}">Register</a></p>
     </div>
 </body>

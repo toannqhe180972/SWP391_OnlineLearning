@@ -2,6 +2,7 @@ package com.fa.training.controller;
 
 import com.fa.training.entities.User;
 import com.fa.training.repository.UserRepository;
+import com.fa.training.service.EmailService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,10 +17,12 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @GetMapping("/profile")
@@ -31,10 +34,13 @@ public class UserController {
 
     @PostMapping("/profile/update")
     public String updateProfile(@AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam String fullName, @RequestParam String mobile) {
+            @RequestParam String firstName, @RequestParam String lastName,
+            @RequestParam String phoneNumber, @RequestParam String address) {
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-        user.setFullName(fullName);
-        user.setMobile(mobile);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setPhoneNumber(phoneNumber);
+        user.setAddress(address);
         userRepository.save(user);
         return "redirect:/profile?success";
     }
@@ -50,11 +56,15 @@ public class UserController {
             Model model) {
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            model.addAttribute("error", "Incorrect!");
+            model.addAttribute("error", "Incorrect current password!");
             return "change-password";
         }
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+
+        // Send alert email
+        emailService.sendPasswordChangedEmail(user.getEmail());
+
         return "redirect:/profile?passwordChanged";
     }
 }
