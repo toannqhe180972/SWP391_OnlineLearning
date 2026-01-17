@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Online Learning Platform</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <header>
+        <div class="container nav">
+            <a th:href="@{/home}" class="logo">OnlineLearning</a>
+            <div class="nav-links">
+                <a th:href="@{/home}">Home</a>
+                <span sec:authorize="isAuthenticated()">
+                    <a th:href="@{/profile}">Profile</a>
+                    <form th:action="@{/logout}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-primary">Logout</button>
+                    </form>
+                </span>
+                <span sec:authorize="isAnonymous()">
+                    <a th:href="@{/login}" class="btn btn-primary">Login</a>
+                    <a th:href="@{/register}">Register</a>
+                </span>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <div class="hero">
+            <h1 th:if="${sliders.size() > 0}" th:text="${sliders[0].title}">Welcome</h1>
+        </div>
+        <h2>Featured Subjects</h2>
+        <div class="grid">
+            <div class="card" th:each="subject : ${featuredSubjects}">
+                <div class="card-content">
+                    <div th:text="${subject.title}" style="font-weight: 700;"></div>
+                    <div th:text="${subject.tagline}" style="color: grey;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
