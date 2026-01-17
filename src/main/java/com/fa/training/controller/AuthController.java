@@ -1,6 +1,7 @@
 package com.fa.training.controller;
 
 import com.fa.training.entities.User;
+import com.fa.training.repository.RoleRepository;
 import com.fa.training.repository.UserRepository;
 import com.fa.training.service.AuditLogService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuditLogService auditLogService;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            AuditLogService auditLogService) {
+    public AuthController(UserRepository userRepository, RoleRepository roleRepository,
+            PasswordEncoder passwordEncoder, AuditLogService auditLogService) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.auditLogService = auditLogService;
     }
@@ -54,8 +57,12 @@ public class AuthController {
                 .firstName(firstName)
                 .lastName(lastName)
                 .provider("LOCAL")
-                .verified(false)
+                .verified(true)
                 .build();
+
+        // Find or create ROLE_USER
+        roleRepository.findByName("ROLE_USER").ifPresent(user.getRoles()::add);
+
         userRepository.save(user);
         auditLogService.log("REGISTER", "User", username, "New user self-registered");
 

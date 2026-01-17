@@ -23,6 +23,18 @@ A robust Spring Boot application for online learning, featuring advanced user ma
   - Account linking confirmation.
   - Security alerts for password changes.
 
+### 🛠️ Admin & System Management
+- **Audit Logs**: Comprehensive tracking of system actions (Registration, Settings changes, User updates).
+- **User Administration**: Filterable/searchable user list with role and status management.
+- **System Settings**: Modular management of system categories and dynamic configurations.
+- **Admin Dashboard**: Centralized navigation including User, Settings, and Audit Log management.
+
+### 📝 Audit Logging Integrated
+Records actions like:
+- `REGISTER`: New user self-registration.
+- `CREATE_USER`/`UPDATE_USER`: Administrative user management.
+- `CREATE_SETTING`/`UPDATE_SETTING`/`TOGGLE_SETTING`: System configuration changes.
+
 ## Tech Stack
 - **Backend**: Spring Boot 3.4.1, Spring Data JPA, Spring Security, OAuth2 Client.
 - **Database**: MySQL.
