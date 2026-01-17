@@ -11,7 +11,15 @@
     <header>
         <div class="container nav">
             <a th:href="@{/home}" class="logo">OnlineLearning</a>
-            <div class="nav-links"><a th:href="@{/home}">Home</a><a th:href="@{/profile}">Profile</a></div>
+            <div class="nav-links">
+                <a th:href="@{/home}">Home</a>
+                <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
+                <a th:href="@{/admin/settings}" sec:authorize="hasRole('ADMIN')">Settings</a>
+                <a th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" style="display:inline;"><button type="submit"
+                        style="background:none;border:none;color:#4f46e5;cursor:pointer;font-weight:500;">Logout</button>
+                </form>
+            </div>
         </div>
     </header>
     <main class="container">

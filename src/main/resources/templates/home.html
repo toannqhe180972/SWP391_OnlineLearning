@@ -13,10 +13,14 @@
             <a th:href="@{/home}" class="logo">OnlineLearning</a>
             <div class="nav-links">
                 <a th:href="@{/home}">Home</a>
+                <!-- Admin specific links -->
+                <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
+                <a th:href="@{/admin/settings}" sec:authorize="hasRole('ADMIN')">Settings</a>
+
                 <span sec:authorize="isAuthenticated()">
                     <a th:href="@{/profile}">Profile</a>
                     <form th:action="@{/logout}" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-primary">Logout</button>
+                        <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem;">Logout</button>
                     </form>
                 </span>
                 <span sec:authorize="isAnonymous()">
