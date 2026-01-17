@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test Email - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <header>
+        <div class="container nav">
+            <a th:href="@{/home}" class="logo">OnlineLearning</a>
+            <div class="nav-links"><a th:href="@{/home}">Home</a><a th:href="@{/admin/test-email}">Test Email</a></div>
+        </div>
+    </header>
+    <main class="container">
+        <div class="auth-card" style="max-width: 500px;">
+            <h2>Test Email Service</h2>
+            <div th:if="${success}" th:text="${success}"
+                style="color: green; margin-bottom: 1rem; padding: 10px; background: #dcfce7; border-radius: 5px;">
+            </div>
+            <div th:if="${error}" th:text="${error}"
+                style="color: red; margin-bottom: 1rem; padding: 10px; background: #fee2e2; border-radius: 5px;"></div>
+            <form th:action="@{/admin/test-email}" method="post">
+                <div class="form-group">
+                    <label>Recipient Email</label>
+                    <input type="email" name="email" placeholder="Enter email to test" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Send Test Email</button>
+            </form>
+            <p style="margin-top: 1rem; color: #64748b; font-size: 0.875rem;">
+                This will send a sample "Welcome Google" email to the specified address.
+            </p>
+        </div>
+    </main>
+</body>
+
+</html>

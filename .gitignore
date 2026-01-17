@@ -36,3 +36,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Sensitive Files ###
+.env
+application-local.properties
