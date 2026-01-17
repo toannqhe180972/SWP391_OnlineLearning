@@ -9,10 +9,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
 
-    @Query("SELECT a FROM AuditLog a WHERE " +
-            "(:performedBy IS NULL OR a.performedBy LIKE %:performedBy%) AND " +
-            "(:action IS NULL OR a.action = :action)")
-    Page<AuditLog> findWithFilters(@Param("performedBy") String performedBy,
-            @Param("action") String action,
-            Pageable pageable);
+        @Query("SELECT a FROM AuditLog a WHERE " +
+                        "(:performedBy IS NULL OR :performedBy = '' OR a.performedBy LIKE %:performedBy%) AND " +
+                        "(:action IS NULL OR :action = '' OR a.action = :action)")
+        Page<AuditLog> findWithFilters(@Param("performedBy") String performedBy,
+                        @Param("action") String action,
+                        Pageable pageable);
 }

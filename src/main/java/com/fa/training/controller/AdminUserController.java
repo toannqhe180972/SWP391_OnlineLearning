@@ -40,7 +40,7 @@ public class AdminUserController {
     @GetMapping
     public String userList(@RequestParam(required = false) String gender,
             @RequestParam(required = false) String role,
-            @RequestParam(required = false) UserStatus status,
+            @RequestParam(required = false) String status,
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -50,7 +50,8 @@ public class AdminUserController {
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<User> users = userRepository.findWithFilters(gender, role, status, search, pageable);
+        UserStatus userStatus = (status != null && !status.isEmpty()) ? UserStatus.valueOf(status) : null;
+        Page<User> users = userRepository.findWithFilters(gender, role, userStatus, search, pageable);
 
         model.addAttribute("users", users);
         model.addAttribute("gender", gender);

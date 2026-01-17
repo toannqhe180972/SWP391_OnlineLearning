@@ -26,7 +26,7 @@ public class SettingsController {
 
     @GetMapping
     public String settingsList(@RequestParam(required = false) String type,
-            @RequestParam(required = false) SettingStatus status,
+            @RequestParam(required = false) String status,
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -36,7 +36,8 @@ public class SettingsController {
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Setting> settings = settingRepository.findWithFilters(type, status, search, pageable);
+        SettingStatus settingStatus = (status != null && !status.isEmpty()) ? SettingStatus.valueOf(status) : null;
+        Page<Setting> settings = settingRepository.findWithFilters(type, settingStatus, search, pageable);
 
         model.addAttribute("settings", settings);
         model.addAttribute("type", type);
