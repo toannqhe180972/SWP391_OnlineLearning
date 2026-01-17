@@ -18,16 +18,19 @@ public class DataLoader implements CommandLineRunner {
     private final SubjectRepository subjectRepository;
     private final PostRepository postRepository;
     private final SliderRepository sliderRepository;
+    private final SettingRepository settingRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DataLoader(UserRepository userRepository, RoleRepository roleRepository,
             SubjectRepository subjectRepository, PostRepository postRepository,
-            SliderRepository sliderRepository, PasswordEncoder passwordEncoder) {
+            SliderRepository sliderRepository, SettingRepository settingRepository,
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.subjectRepository = subjectRepository;
         this.postRepository = postRepository;
         this.sliderRepository = sliderRepository;
+        this.settingRepository = settingRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -58,6 +61,7 @@ public class DataLoader implements CommandLineRunner {
                     .email("admin@onlinelearning.com")
                     .verified(true)
                     .provider("LOCAL")
+                    .status(UserStatus.ACTIVE)
                     .roles(new HashSet<>(Collections.singletonList(adminRole)))
                     .build();
             userRepository.save(admin);
@@ -72,6 +76,7 @@ public class DataLoader implements CommandLineRunner {
                     .email("user@onlinelearning.com")
                     .verified(true)
                     .provider("LOCAL")
+                    .status(UserStatus.ACTIVE)
                     .roles(new HashSet<>(Collections.singletonList(userRole)))
                     .build();
             userRepository.save(user);
@@ -90,6 +95,19 @@ public class DataLoader implements CommandLineRunner {
         if (postRepository.count() == 0) {
             Post p1 = new Post(null, "News", "/images/news1.jpg", LocalDateTime.now(), "Content", true);
             postRepository.save(p1);
+        }
+
+        // Init Settings
+        if (settingRepository.count() == 0) {
+            Setting s1 = Setting.builder().type("SUBJECT_CATEGORY").value("Programming").order(1)
+                    .description("Programming subjects").status(SettingStatus.ACTIVE).build();
+            Setting s2 = Setting.builder().type("SUBJECT_CATEGORY").value("Design").order(2)
+                    .description("Design subjects").status(SettingStatus.ACTIVE).build();
+            Setting s3 = Setting.builder().type("POST_TYPE").value("News").order(1)
+                    .description("News posts").status(SettingStatus.ACTIVE).build();
+            settingRepository.save(s1);
+            settingRepository.save(s2);
+            settingRepository.save(s3);
         }
     }
 }
