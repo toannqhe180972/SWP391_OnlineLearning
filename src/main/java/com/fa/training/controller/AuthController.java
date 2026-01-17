@@ -2,6 +2,7 @@ package com.fa.training.controller;
 
 import com.fa.training.entities.User;
 import com.fa.training.repository.UserRepository;
+import com.fa.training.service.AuditLogService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,10 +15,13 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuditLogService auditLogService;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            AuditLogService auditLogService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.auditLogService = auditLogService;
     }
 
     @GetMapping("/login")
@@ -53,6 +57,7 @@ public class AuthController {
                 .verified(false)
                 .build();
         userRepository.save(user);
+        auditLogService.log("REGISTER", "User", username, "New user self-registered");
 
         model.addAttribute("message", "Registration successful! Please login.");
         return "login";

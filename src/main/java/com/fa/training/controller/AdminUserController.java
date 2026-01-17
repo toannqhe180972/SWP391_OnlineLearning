@@ -5,6 +5,7 @@ import com.fa.training.entities.User;
 import com.fa.training.entities.UserStatus;
 import com.fa.training.repository.RoleRepository;
 import com.fa.training.repository.UserRepository;
+import com.fa.training.service.AuditLogService;
 import com.fa.training.service.EmailService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,13 +26,15 @@ public class AdminUserController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final AuditLogService auditLogService;
 
     public AdminUserController(UserRepository userRepository, RoleRepository roleRepository,
-            PasswordEncoder passwordEncoder, EmailService emailService) {
+            PasswordEncoder passwordEncoder, EmailService emailService, AuditLogService auditLogService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
+        this.auditLogService = auditLogService;
     }
 
     @GetMapping
@@ -107,6 +110,7 @@ public class AdminUserController {
         user.getRoles().add(role);
 
         userRepository.save(user);
+        auditLogService.log("CREATE_USER", "User", user.getUsername(), "Created by Admin");
         emailService.sendWelcomeEmail(email, username, randomPassword);
 
         return "redirect:/admin/users";
@@ -122,7 +126,9 @@ public class AdminUserController {
         user.getRoles().add(role);
         user.setStatus(status);
 
+        String details = String.format("Admin updated user role to %s and status to %s", role.getName(), status);
         userRepository.save(user);
+        auditLogService.log("UPDATE_USER", "User", user.getUsername(), details);
         return "redirect:/admin/users/" + id;
     }
 }

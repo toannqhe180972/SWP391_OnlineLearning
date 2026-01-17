@@ -5,50 +5,21 @@
     <meta charset="UTF-8">
     <title>User Management - Admin</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-
-        th,
-        td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        th {
-            background: #f8fafc;
-            font-weight: 600;
-        }
-
-        .filters {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .pagination {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            margin: 1rem 0;
-        }
-
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-        }
-    </style>
 </head>
 
 <body>
     <header>
-        <div class="container nav"><a th:href="@{/home}" class="logo">OnlineLearning</a>
-            <div class="nav-links"><a th:href="@{/admin/users}">Users</a><a th:href="@{/admin/settings}">Settings</a>
+        <div class="container nav">
+            <a th:href="@{/home}" class="logo">OnlineLearning</a>
+            <div class="nav-links">
+                <a th:href="@{/home}">Home</a>
+                <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
+                <a th:href="@{/admin/settings}" sec:authorize="hasRole('ADMIN')">Settings</a>
+                <a th:href="@{/admin/audit-logs}" sec:authorize="hasRole('ADMIN')">Audit Logs</a>
+                <a th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" style="display:inline;"><button type="submit"
+                        style="background:none;border:none;color:#4f46e5;cursor:pointer;font-weight:500;">Logout</button>
+                </form>
             </div>
         </div>
     </header>

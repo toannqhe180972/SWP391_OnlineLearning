@@ -3,6 +3,7 @@ package com.fa.training.controller;
 import com.fa.training.entities.Setting;
 import com.fa.training.entities.SettingStatus;
 import com.fa.training.repository.SettingRepository;
+import com.fa.training.service.AuditLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class SettingsController {
 
     private final SettingRepository settingRepository;
+    private final AuditLogService auditLogService;
 
-    public SettingsController(SettingRepository settingRepository) {
+    public SettingsController(SettingRepository settingRepository, AuditLogService auditLogService) {
         this.settingRepository = settingRepository;
+        this.auditLogService = auditLogService;
     }
 
     @GetMapping
@@ -72,6 +75,7 @@ public class SettingsController {
                 .status(status)
                 .build();
         settingRepository.save(setting);
+        auditLogService.log("CREATE_SETTING", "Setting", type, "Value: " + value);
         return "redirect:/admin/settings";
     }
 
@@ -86,6 +90,7 @@ public class SettingsController {
         setting.setDescription(description);
         setting.setStatus(status);
         settingRepository.save(setting);
+        auditLogService.log("UPDATE_SETTING", "Setting", setting.getId().toString(), "Updated by Admin");
         return "redirect:/admin/settings/" + id;
     }
 
@@ -94,6 +99,8 @@ public class SettingsController {
         Setting setting = settingRepository.findById(id).orElseThrow();
         setting.setStatus(setting.getStatus() == SettingStatus.ACTIVE ? SettingStatus.INACTIVE : SettingStatus.ACTIVE);
         settingRepository.save(setting);
+        auditLogService.log("TOGGLE_SETTING", "Setting", setting.getId().toString(),
+                "New status: " + setting.getStatus());
         return "redirect:/admin/settings";
     }
 }

@@ -13,9 +13,9 @@
             <a th:href="@{/home}" class="logo">OnlineLearning</a>
             <div class="nav-links">
                 <a th:href="@{/home}">Home</a>
-                <!-- Admin specific links -->
                 <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
                 <a th:href="@{/admin/settings}" sec:authorize="hasRole('ADMIN')">Settings</a>
+                <a th:href="@{/admin/audit-logs}" sec:authorize="hasRole('ADMIN')">Audit Logs</a>
 
                 <span sec:authorize="isAuthenticated()">
                     <a th:href="@{/profile}">Profile</a>

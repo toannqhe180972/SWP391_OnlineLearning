@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Audit Logs - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <header>
+        <div class="container nav">
+            <a th:href="@{/home}" class="logo">OnlineLearning</a>
+            <div class="nav-links">
+                <a th:href="@{/home}">Home</a>
+                <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
+                <a th:href="@{/admin/settings}" sec:authorize="hasRole('ADMIN')">Settings</a>
+                <a th:href="@{/admin/audit-logs}" sec:authorize="hasRole('ADMIN')">Audit Logs</a>
+                <a th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" style="display:inline;"><button type="submit"
+                        style="background:none;border:none;color:#4f46e5;cursor:pointer;font-weight:500;">Logout</button>
+                </form>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <h2>System Audit Logs</h2>
+        <div class="filters">
+            <form th:action="@{/admin/audit-logs}" method="get"
+                style="display:flex;gap:1rem;flex-wrap:wrap;width:100%;">
+                <input type="text" name="performedBy" th:value="${performedBy}" placeholder="Search by User"
+                    style="flex:1;">
+                <input type="text" name="action" th:value="${action}" placeholder="Filter by Action">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th><a
+                            th:href="@{/admin/audit-logs(sortBy='timestamp',sortDir=${sortDir=='asc'?'desc':'asc'}, performedBy=${performedBy}, action=${action})}">Timestamp</a>
+                    </th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>ID</th>
+                    <th>Performed By</th>
+                    <th>IP Address</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="log : ${auditLogs}">
+                    <td class="timestamp" th:text="${#temporals.format(log.timestamp, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td th:text="${log.action}"></td>
+                    <td th:text="${log.entityName}"></td>
+                    <td th:text="${log.entityId}"></td>
+                    <td th:text="${log.performedBy}"></td>
+                    <td th:text="${log.ipAddress}"></td>
+                    <td class="details-cell" th:title="${log.details}" th:text="${log.details}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pagination" th:if="${auditLogs.totalPages > 0}">
+            <a th:if="${auditLogs.hasPrevious()}"
+                th:href="@{/admin/audit-logs(page=${auditLogs.number-1},size=${auditLogs.size},sortBy=${sortBy},sortDir=${sortDir},performedBy=${performedBy},action=${action})}"
+                class="btn">Previous</a>
+            <span>Page [[${auditLogs.number+1}]] of [[${auditLogs.totalPages}]]</span>
+            <a th:if="${auditLogs.hasNext()}"
+                th:href="@{/admin/audit-logs(page=${auditLogs.number+1},size=${auditLogs.size},sortBy=${sortBy},sortDir=${sortDir},performedBy=${performedBy},action=${action})}"
+                class="btn">Next</a>
+        </div>
+    </main>
+</body>
+
+</html>
