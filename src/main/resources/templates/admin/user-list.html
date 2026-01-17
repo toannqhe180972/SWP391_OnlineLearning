@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>User Management - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th,
+        td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container nav"><a th:href="@{/home}" class="logo">OnlineLearning</a>
+            <div class="nav-links"><a th:href="@{/admin/users}">Users</a><a th:href="@{/admin/settings}">Settings</a>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <h2>User Management</h2>
+        <div class="filters">
+            <form th:action="@{/admin/users}" method="get" style="display:flex;gap:1rem;flex-wrap:wrap;width:100%;">
+                <input type="text" name="search" th:value="${search}" placeholder="Search by name, email, mobile"
+                    style="flex:1;min-width:200px;">
+                <select name="gender">
+                    <option value="">All Genders</option>
+                    <option th:value="'Male'" th:selected="${gender=='Male'}">Male</option>
+                    <option value="Female" th:selected="${gender=='Female'}">Female</option>
+                </select>
+                <select name="status">
+                    <option value="">All Status</option>
+                    <option th:each="s:${statuses}" th:value="${s}" th:text="${s}" th:selected="${s==status}"></option>
+                </select>
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a th:href="@{/admin/users/new}" class="btn btn-primary">Add New User</a>
+            </form>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th><a
+                            th:href="@{/admin/users(sortBy='id',sortDir=${sortDir=='asc'?'desc':'asc'}, gender=${gender}, status=${status}, search=${search})}">ID</a>
+                    </th>
+                    <th><a
+                            th:href="@{/admin/users(sortBy='firstName',sortDir=${sortDir=='asc'?'desc':'asc'}, gender=${gender}, status=${status}, search=${search})}">Full
+                            Name</a></th>
+                    <th>Gender</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.fullName}"></td>
+                    <td th:text="${user.gender}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.phoneNumber}"></td>
+                    <td><span th:each="role:${user.roles}" th:text="${role.name}"></span></td>
+                    <td th:text="${user.status}"></td>
+                    <td>
+                        <a th:href="@{/admin/users/{id}(id=${user.id})}" class="btn btn-sm">View/Edit</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pagination">
+            <a th:if="${users.hasPrevious()}"
+                th:href="@{/admin/users(page=${users.number-1},size=${users.size},sortBy=${sortBy},sortDir=${sortDir},gender=${gender},status=${status},search=${search})}"
+                class="btn">Previous</a>
+            <span>Page [[${users.number+1}]] of [[${users.totalPages}]]</span>
+            <a th:if="${users.hasNext()}"
+                th:href="@{/admin/users(page=${users.number+1},size=${users.size},sortBy=${sortBy},sortDir=${sortDir},gender=${gender},status=${status},search=${search})}"
+                class="btn">Next</a>
+        </div>
+    </main>
+</body>
+
+</html>
