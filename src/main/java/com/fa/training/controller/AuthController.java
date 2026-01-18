@@ -102,13 +102,18 @@ public class AuthController {
             roleRepository.findByName(SecurityConstants.ROLE_USER).ifPresent(user.getRoles()::add);
 
             // Save user with transaction
+            System.out.println("Attempting to save user: " + user.getUsername());
             User savedUser = userService.registerNewUser(user);
+            System.out.println("User saved successfully with ID: " + savedUser.getId());
+
             auditLogService.log(AuditAction.REGISTER.name(), "User", savedUser.getUsername(),
                     "New user self-registered");
 
             redirectAttributes.addFlashAttribute("message", SuccessMessages.REGISTRATION_SUCCESS);
             return "redirect:/login";
         } catch (Exception e) {
+            System.err.println("Registration failed: " + e.getMessage());
+            e.printStackTrace();
             model.addAttribute("error", "Registration failed: " + e.getMessage());
             model.addAttribute("username", username);
             model.addAttribute("email", email);

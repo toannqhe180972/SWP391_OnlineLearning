@@ -43,20 +43,17 @@ public class UserController {
     }
 
     @PostMapping("/profile/update")
-            @RequestParam String phoneNumber,
-    @RequestParam
-    String address,
-    @RequestParam
-    String gender)
-    {
+    public String updateProfile(@AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam String firstName, @RequestParam String lastName,
+            @RequestParam String phoneNumber, @RequestParam String address,
+            @RequestParam String gender) {
         userService.updateProfile(userDetails.getUsername(), firstName, lastName, phoneNumber, address, gender);
         return ViewConstants.REDIRECT_PROFILE + "?success";
     }
 
     @PostMapping("/profile/avatar")
-            @RequestParam("avatar") MultipartFile file,
-            Model model)
-    {
+    public String uploadAvatar(@AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam("avatar") MultipartFile file) {
         try {
             String avatarUrl = fileUploadService.uploadAvatar(file);
             userService.updateAvatar(userDetails.getUsername(), avatarUrl);
