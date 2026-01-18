@@ -1,5 +1,6 @@
 package com.fa.training.controller;
 
+import com.fa.training.constant.AttributeConstants;
 import com.fa.training.constant.PaginationConstants;
 import com.fa.training.constant.SecurityConstants;
 import com.fa.training.constant.ViewConstants;
@@ -58,14 +59,14 @@ public class AdminUserController {
         UserStatus userStatus = (status != null && !status.isEmpty()) ? UserStatus.valueOf(status) : null;
         Page<User> users = userRepository.findWithFilters(gender, role, userStatus, search, pageable);
 
-        model.addAttribute("users", users);
+        model.addAttribute(AttributeConstants.ATTR_USERS, users);
         model.addAttribute("gender", gender);
         model.addAttribute("role", role);
         model.addAttribute("status", status);
         model.addAttribute("search", search);
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortDir", sortDir);
-        model.addAttribute("statuses", UserStatus.values());
+        model.addAttribute(AttributeConstants.ATTR_STATUSES, UserStatus.values());
 
         return ViewConstants.VIEW_ADMIN_USER_LIST;
     }
@@ -73,16 +74,16 @@ public class AdminUserController {
     @GetMapping("/{id}")
     public String userDetail(@PathVariable Long id, Model model) {
         User user = userRepository.findById(id).orElseThrow();
-        model.addAttribute("user", user);
-        model.addAttribute("roles", roleRepository.findAll());
-        model.addAttribute("statuses", UserStatus.values());
+        model.addAttribute(AttributeConstants.ATTR_USER, user);
+        model.addAttribute(AttributeConstants.ATTR_ROLES, roleRepository.findAll());
+        model.addAttribute(AttributeConstants.ATTR_STATUSES, UserStatus.values());
         return ViewConstants.VIEW_ADMIN_USER_DETAIL;
     }
 
     @GetMapping("/new")
     public String newUserForm(Model model) {
-        model.addAttribute("roles", roleRepository.findAll());
-        model.addAttribute("statuses", UserStatus.values());
+        model.addAttribute(AttributeConstants.ATTR_ROLES, roleRepository.findAll());
+        model.addAttribute(AttributeConstants.ATTR_STATUSES, UserStatus.values());
         return ViewConstants.VIEW_ADMIN_USER_DETAIL;
     }
 

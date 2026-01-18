@@ -1,5 +1,6 @@
 package com.fa.training.controller;
 
+import com.fa.training.constant.AttributeConstants;
 import com.fa.training.constant.PaginationConstants;
 import com.fa.training.constant.ViewConstants;
 import com.fa.training.entities.Setting;
@@ -42,13 +43,13 @@ public class SettingsController {
         SettingStatus settingStatus = (status != null && !status.isEmpty()) ? SettingStatus.valueOf(status) : null;
         Page<Setting> settings = settingRepository.findWithFilters(type, settingStatus, search, pageable);
 
-        model.addAttribute("settings", settings);
+        model.addAttribute(AttributeConstants.ATTR_SETTINGS, settings);
         model.addAttribute("type", type);
         model.addAttribute("status", status);
         model.addAttribute("search", search);
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortDir", sortDir);
-        model.addAttribute("statuses", SettingStatus.values());
+        model.addAttribute(AttributeConstants.ATTR_STATUSES, SettingStatus.values());
 
         return ViewConstants.VIEW_ADMIN_SETTINGS_LIST;
     }
@@ -56,14 +57,14 @@ public class SettingsController {
     @GetMapping("/{id}")
     public String settingDetail(@PathVariable Long id, Model model) {
         Setting setting = settingRepository.findById(id).orElseThrow();
-        model.addAttribute("setting", setting);
-        model.addAttribute("statuses", SettingStatus.values());
+        model.addAttribute(AttributeConstants.ATTR_SETTING, setting);
+        model.addAttribute(AttributeConstants.ATTR_STATUSES, SettingStatus.values());
         return ViewConstants.VIEW_ADMIN_SETTINGS_DETAIL;
     }
 
     @GetMapping("/new")
     public String newSettingForm(Model model) {
-        model.addAttribute("statuses", SettingStatus.values());
+        model.addAttribute(AttributeConstants.ATTR_STATUSES, SettingStatus.values());
         return ViewConstants.VIEW_ADMIN_SETTINGS_DETAIL;
     }
 

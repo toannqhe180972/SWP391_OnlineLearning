@@ -49,7 +49,8 @@ public class WebSecurityConfig {
                                                 .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**")
                                                 .permitAll()
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                                                .requestMatchers("/profile/**", "/change-password/**")
+                                                .requestMatchers("/profile", "/profile/**", "/change-password",
+                                                                "/change-password/**")
                                                 .hasAnyRole("USER", "ADMIN")
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
