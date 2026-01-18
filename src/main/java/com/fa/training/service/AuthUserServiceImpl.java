@@ -27,12 +27,15 @@ public class AuthUserServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
+        Collection<? extends GrantedAuthority> authorities = mapRolesToAuthorities(user.getRoles());
+        System.out.println("User: " + username + ", Authorities: " + authorities);
+
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
                 user.isVerified(),
                 true, true, true,
-                mapRolesToAuthorities(user.getRoles()));
+                authorities);
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {

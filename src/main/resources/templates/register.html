@@ -10,15 +10,32 @@
 <body>
     <div class="auth-card">
         <h2>Register</h2>
-        <div th:if="${error}" th:text="${error}" style="color: red; margin-bottom: 1rem;"></div>
+        <div th:if="${error}" th:text="${error}"
+            style="color: red; margin-bottom: 1rem; padding: 0.75rem; background: #fee2e2; border-radius: 4px;"></div>
         <form th:action="@{/register}" method="post">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="form-group"><label>First Name</label><input type="text" name="firstName" required></div>
-                <div class="form-group"><label>Last Name</label><input type="text" name="lastName" required></div>
+                <div class="form-group">
+                    <label>First Name *</label>
+                    <input type="text" name="firstName" th:value="${firstName}" required minlength="2" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label>Last Name *</label>
+                    <input type="text" name="lastName" th:value="${lastName}" required minlength="2" maxlength="50">
+                </div>
             </div>
-            <div class="form-group"><label>Username</label><input type="text" name="username" required></div>
-            <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
-            <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
+            <div class="form-group">
+                <label>Username * (min 3 characters)</label>
+                <input type="text" name="username" th:value="${username}" required minlength="3" maxlength="50"
+                    pattern="[a-zA-Z0-9_]+" title="Username can only contain letters, numbers and underscores">
+            </div>
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" name="email" th:value="${email}" required maxlength="100">
+            </div>
+            <div class="form-group">
+                <label>Password * (min 6 characters)</label>
+                <input type="password" name="password" required minlength="6" maxlength="50">
+            </div>
             <button type="submit" class="btn btn-primary" style="width:100%;">Register</button>
         </form>
         <p style="text-align:center; margin-top:1rem;">Already have an account? <a th:href="@{/login}">Login</a></p>

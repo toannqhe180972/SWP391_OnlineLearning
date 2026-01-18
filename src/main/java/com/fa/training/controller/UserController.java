@@ -6,6 +6,7 @@ import com.fa.training.message.ErrorMessages;
 import com.fa.training.repository.UserRepository;
 import com.fa.training.service.EmailService;
 import com.fa.training.service.FileUploadService;
+import com.fa.training.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,13 +24,15 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final FileUploadService fileUploadService;
+    private final UserService userService;
 
     public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            EmailService emailService, FileUploadService fileUploadService) {
+            EmailService emailService, FileUploadService fileUploadService, UserService userService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.fileUploadService = fileUploadService;
+        this.userService = userService;
     }
 
     @GetMapping("/profile")
@@ -40,32 +43,25 @@ public class UserController {
     }
 
     @PostMapping("/profile/update")
-    public String updateProfile(@AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam String firstName, @RequestParam String lastName,
-            @RequestParam String phoneNumber, @RequestParam String address,
-            @RequestParam String gender) {
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setPhoneNumber(phoneNumber);
-        user.setAddress(address);
-        user.setGender(gender);
-        userRepository.save(user);
+            @RequestParam String phoneNumber,
+    @RequestParam
+    String address,
+    @RequestParam
+    String gender)
+    {
+        userService.updateProfile(userDetails.getUsername(), firstName, lastName, phoneNumber, address, gender);
         return ViewConstants.REDIRECT_PROFILE + "?success";
     }
 
     @PostMapping("/profile/avatar")
-    public String uploadAvatar(@AuthenticationPrincipal UserDetails userDetails,
             @RequestParam("avatar") MultipartFile file,
-            Model model) {
+            Model model)
+    {
         try {
-            User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
             String avatarUrl = fileUploadService.uploadAvatar(file);
-            user.setAvatarUrl(avatarUrl);
-            userRepository.save(user);
+            userService.updateAvatar(userDetails.getUsername(), avatarUrl);
             return ViewConstants.REDIRECT_PROFILE + "?avatarSuccess";
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
             return ViewConstants.REDIRECT_PROFILE + "?avatarError=" + e.getMessage();
         }
     }
@@ -84,9 +80,8 @@ public class UserController {
             model.addAttribute("error", ErrorMessages.PASSWORD_INCORRECT);
             return ViewConstants.VIEW_CHANGE_PASSWORD;
         }
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
 
+        userService.changePassword(userDetails.getUsername(), passwordEncoder.encode(newPassword));
         emailService.sendPasswordChangedEmail(user.getEmail());
 
         return ViewConstants.REDIRECT_PROFILE + "?passwordChanged";

@@ -44,11 +44,13 @@ public class WebSecurityConfig {
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http.csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/", "/home", "/login", "/register", "/reset-password",
-                                                                "/css/**", "/js/**",
-                                                                "/images/**", "/uploads/**")
+                                                .requestMatchers("/", "/home", "/login", "/register", "/reset-password")
+                                                .permitAll()
+                                                .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**")
                                                 .permitAll()
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                                                .requestMatchers("/profile/**", "/change-password/**")
+                                                .hasAnyRole("USER", "ADMIN")
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
                                                 .loginPage("/login")

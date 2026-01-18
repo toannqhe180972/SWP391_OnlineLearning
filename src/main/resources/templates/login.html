@@ -10,11 +10,26 @@
 <body>
     <div class="auth-card">
         <h2>Login</h2>
-        <div th:if="${param.error}" style="color: red;">Invalid credentials.</div>
-        <div th:if="${message}" th:text="${message}" style="color: green;"></div>
+        <div th:if="${param.error}"
+            style="color: #dc2626; margin-bottom: 1rem; padding: 0.75rem; background: #fee2e2; border-radius: 4px; border-left: 4px solid #dc2626;">
+            <strong>Invalid credentials.</strong> Please check your username and password.
+        </div>
+        <div th:if="${param.logout}"
+            style="color: #059669; margin-bottom: 1rem; padding: 0.75rem; background: #d1fae5; border-radius: 4px; border-left: 4px solid #059669;">
+            You have been logged out successfully.
+        </div>
+        <div th:if="${message}" th:text="${message}"
+            style="color: #059669; margin-bottom: 1rem; padding: 0.75rem; background: #d1fae5; border-radius: 4px; border-left: 4px solid #059669;">
+        </div>
         <form th:action="@{/login}" method="post">
-            <div class="form-group"><label>Username</label><input type="text" name="username" required></div>
-            <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
             <button type="submit" class="btn btn-primary" style="width:100%;">Sign In</button>
         </form>
         <div style="margin: 1rem 0; text-align: center; color: #64748b;">OR</div>
