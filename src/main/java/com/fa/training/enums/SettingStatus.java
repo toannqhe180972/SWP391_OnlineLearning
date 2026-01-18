@@ -1,4 +1,4 @@
-package com.fa.training.entities;
+package com.fa.training.enums;
 
 public enum SettingStatus {
     ACTIVE,

@@ -1,7 +1,7 @@
 package com.fa.training.repository;
 
 import com.fa.training.entities.Setting;
-import com.fa.training.entities.SettingStatus;
+import com.fa.training.enums.SettingStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

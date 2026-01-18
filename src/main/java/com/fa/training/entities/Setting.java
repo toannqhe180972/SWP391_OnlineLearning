@@ -1,5 +1,6 @@
 package com.fa.training.entities;
 
+import com.fa.training.enums.SettingStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

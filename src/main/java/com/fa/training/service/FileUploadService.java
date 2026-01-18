@@ -1,5 +1,7 @@
 package com.fa.training.service;
 
+import com.fa.training.constant.FileConstants;
+import com.fa.training.message.ErrorMessages;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,32 +15,28 @@ import java.util.UUID;
 @Service
 public class FileUploadService {
 
-    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/avatars/";
-    private static final long MAX_FILE_SIZE = 1024 * 1024; // 1MB
-    private static final String[] ALLOWED_EXTENSIONS = { "jpg", "jpeg", "png", "gif" };
-
     public String uploadAvatar(MultipartFile file) throws IOException {
         // Validate file
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("File is empty");
+            throw new IllegalArgumentException(ErrorMessages.FILE_EMPTY);
         }
 
-        if (file.getSize() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException("File size exceeds 1MB limit");
+        if (file.getSize() > FileConstants.MAX_AVATAR_SIZE) {
+            throw new IllegalArgumentException(ErrorMessages.FILE_TOO_LARGE);
         }
 
         String originalFilename = file.getOriginalFilename();
         String extension = getFileExtension(originalFilename);
 
         if (!isValidExtension(extension)) {
-            throw new IllegalArgumentException("Invalid file type. Only jpg, jpeg, png, gif allowed");
+            throw new IllegalArgumentException(ErrorMessages.FILE_INVALID_TYPE);
         }
 
         // Generate unique filename
         String newFilename = UUID.randomUUID().toString() + "." + extension;
 
         // Create directory if not exists
-        Path uploadPath = Paths.get(UPLOAD_DIR);
+        Path uploadPath = Paths.get(FileConstants.UPLOAD_DIR);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
@@ -48,7 +46,7 @@ public class FileUploadService {
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         // Return public URL
-        return "/uploads/avatars/" + newFilename;
+        return FileConstants.UPLOAD_URL_PREFIX + newFilename;
     }
 
     private String getFileExtension(String filename) {
@@ -59,7 +57,7 @@ public class FileUploadService {
     }
 
     private boolean isValidExtension(String extension) {
-        for (String allowed : ALLOWED_EXTENSIONS) {
+        for (String allowed : FileConstants.ALLOWED_IMAGE_EXTENSIONS) {
             if (allowed.equals(extension)) {
                 return true;
             }

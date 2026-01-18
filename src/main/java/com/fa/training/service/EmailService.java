@@ -1,5 +1,6 @@
 package com.fa.training.service;
 
+import com.fa.training.message.EmailSubjects;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,19 +25,19 @@ public class EmailService {
         context.setVariable("username", username);
         context.setVariable("password", password);
         String content = templateEngine.process("email/welcome-google", context);
-        sendHtmlEmail(to, "Welcome to Online Learning Platform", content);
+        sendHtmlEmail(to, EmailSubjects.WELCOME, content);
     }
 
     public void sendAccountLinkedEmail(String to) {
         Context context = new Context();
         String content = templateEngine.process("email/account-linked", context);
-        sendHtmlEmail(to, "Google Account Linked Successfully", content);
+        sendHtmlEmail(to, EmailSubjects.ACCOUNT_LINKED, content);
     }
 
     public void sendPasswordChangedEmail(String to) {
         Context context = new Context();
         String content = templateEngine.process("email/password-changed", context);
-        sendHtmlEmail(to, "Security Alert: Password Changed", content);
+        sendHtmlEmail(to, EmailSubjects.PASSWORD_CHANGED, content);
     }
 
     private void sendHtmlEmail(String to, String subject, String content) {

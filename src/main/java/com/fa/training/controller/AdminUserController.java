@@ -1,8 +1,13 @@
 package com.fa.training.controller;
 
+import com.fa.training.constant.PaginationConstants;
+import com.fa.training.constant.SecurityConstants;
+import com.fa.training.constant.ViewConstants;
 import com.fa.training.entities.Role;
 import com.fa.training.entities.User;
-import com.fa.training.entities.UserStatus;
+import com.fa.training.enums.AuditAction;
+import com.fa.training.enums.UserStatus;
+import com.fa.training.message.ErrorMessages;
 import com.fa.training.repository.RoleRepository;
 import com.fa.training.repository.UserRepository;
 import com.fa.training.service.AuditLogService;
@@ -42,10 +47,10 @@ public class AdminUserController {
             @RequestParam(required = false) String role,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "" + PaginationConstants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(defaultValue = "" + PaginationConstants.DEFAULT_PAGE_SIZE) int size,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_SORT_BY) String sortBy,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_SORT_DIRECTION) String sortDir,
             Model model) {
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -62,7 +67,7 @@ public class AdminUserController {
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("statuses", UserStatus.values());
 
-        return "admin/user-list";
+        return ViewConstants.VIEW_ADMIN_USER_LIST;
     }
 
     @GetMapping("/{id}")
@@ -71,14 +76,14 @@ public class AdminUserController {
         model.addAttribute("user", user);
         model.addAttribute("roles", roleRepository.findAll());
         model.addAttribute("statuses", UserStatus.values());
-        return "admin/user-detail";
+        return ViewConstants.VIEW_ADMIN_USER_DETAIL;
     }
 
     @GetMapping("/new")
     public String newUserForm(Model model) {
         model.addAttribute("roles", roleRepository.findAll());
         model.addAttribute("statuses", UserStatus.values());
-        return "admin/user-detail";
+        return ViewConstants.VIEW_ADMIN_USER_DETAIL;
     }
 
     @PostMapping
@@ -88,8 +93,8 @@ public class AdminUserController {
             @RequestParam String address, @RequestParam Long roleId,
             @RequestParam UserStatus status, Model model) {
         if (userRepository.findByUsername(username).isPresent()) {
-            model.addAttribute("error", "Username already exists");
-            return "admin/user-detail";
+            model.addAttribute("error", ErrorMessages.USERNAME_EXISTS);
+            return ViewConstants.VIEW_ADMIN_USER_DETAIL;
         }
 
         String randomPassword = UUID.randomUUID().toString().substring(0, 12);
@@ -105,16 +110,16 @@ public class AdminUserController {
                 .phoneNumber(mobile)
                 .address(address)
                 .status(status)
-                .provider("LOCAL")
+                .provider(SecurityConstants.PROVIDER_LOCAL)
                 .verified(true)
                 .build();
         user.getRoles().add(role);
 
         userRepository.save(user);
-        auditLogService.log("CREATE_USER", "User", user.getUsername(), "Created by Admin");
+        auditLogService.log(AuditAction.CREATE_USER.name(), "User", user.getUsername(), "Created by Admin");
         emailService.sendWelcomeEmail(email, username, randomPassword);
 
-        return "redirect:/admin/users";
+        return ViewConstants.REDIRECT_ADMIN_USERS;
     }
 
     @PostMapping("/{id}")
@@ -129,7 +134,7 @@ public class AdminUserController {
 
         String details = String.format("Admin updated user role to %s and status to %s", role.getName(), status);
         userRepository.save(user);
-        auditLogService.log("UPDATE_USER", "User", user.getUsername(), details);
-        return "redirect:/admin/users/" + id;
+        auditLogService.log(AuditAction.UPDATE_USER.name(), "User", user.getUsername(), details);
+        return ViewConstants.REDIRECT_ADMIN_USERS + "/" + id;
     }
 }

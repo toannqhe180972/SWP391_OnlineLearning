@@ -1,6 +1,8 @@
 package com.fa.training.controller;
 
+import com.fa.training.constant.ViewConstants;
 import com.fa.training.entities.User;
+import com.fa.training.message.ErrorMessages;
 import com.fa.training.repository.UserRepository;
 import com.fa.training.service.EmailService;
 import com.fa.training.service.FileUploadService;
@@ -34,7 +36,7 @@ public class UserController {
     public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
         model.addAttribute("user", user);
-        return "profile";
+        return ViewConstants.VIEW_PROFILE;
     }
 
     @PostMapping("/profile/update")
@@ -49,7 +51,7 @@ public class UserController {
         user.setAddress(address);
         user.setGender(gender);
         userRepository.save(user);
-        return "redirect:/profile?success";
+        return ViewConstants.REDIRECT_PROFILE + "?success";
     }
 
     @PostMapping("/profile/avatar")
@@ -61,16 +63,16 @@ public class UserController {
             String avatarUrl = fileUploadService.uploadAvatar(file);
             user.setAvatarUrl(avatarUrl);
             userRepository.save(user);
-            return "redirect:/profile?avatarSuccess";
+            return ViewConstants.REDIRECT_PROFILE + "?avatarSuccess";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
-            return "redirect:/profile?avatarError=" + e.getMessage();
+            return ViewConstants.REDIRECT_PROFILE + "?avatarError=" + e.getMessage();
         }
     }
 
     @GetMapping("/change-password")
     public String changePasswordForm() {
-        return "change-password";
+        return ViewConstants.VIEW_CHANGE_PASSWORD;
     }
 
     @PostMapping("/change-password")
@@ -79,14 +81,14 @@ public class UserController {
             Model model) {
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            model.addAttribute("error", "Incorrect!");
-            return "change-password";
+            model.addAttribute("error", ErrorMessages.PASSWORD_INCORRECT);
+            return ViewConstants.VIEW_CHANGE_PASSWORD;
         }
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
         emailService.sendPasswordChangedEmail(user.getEmail());
 
-        return "redirect:/profile?passwordChanged";
+        return ViewConstants.REDIRECT_PROFILE + "?passwordChanged";
     }
 }

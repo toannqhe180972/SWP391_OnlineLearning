@@ -1,7 +1,10 @@
 package com.fa.training.controller;
 
+import com.fa.training.constant.PaginationConstants;
+import com.fa.training.constant.ViewConstants;
 import com.fa.training.entities.Setting;
-import com.fa.training.entities.SettingStatus;
+import com.fa.training.enums.AuditAction;
+import com.fa.training.enums.SettingStatus;
 import com.fa.training.repository.SettingRepository;
 import com.fa.training.service.AuditLogService;
 import org.springframework.data.domain.Page;
@@ -28,10 +31,10 @@ public class SettingsController {
     public String settingsList(@RequestParam(required = false) String type,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "" + PaginationConstants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(defaultValue = "" + PaginationConstants.DEFAULT_PAGE_SIZE) int size,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_SORT_BY) String sortBy,
+            @RequestParam(defaultValue = PaginationConstants.DEFAULT_SORT_DIRECTION) String sortDir,
             Model model) {
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -47,7 +50,7 @@ public class SettingsController {
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("statuses", SettingStatus.values());
 
-        return "admin/settings-list";
+        return ViewConstants.VIEW_ADMIN_SETTINGS_LIST;
     }
 
     @GetMapping("/{id}")
@@ -55,13 +58,13 @@ public class SettingsController {
         Setting setting = settingRepository.findById(id).orElseThrow();
         model.addAttribute("setting", setting);
         model.addAttribute("statuses", SettingStatus.values());
-        return "admin/settings-detail";
+        return ViewConstants.VIEW_ADMIN_SETTINGS_DETAIL;
     }
 
     @GetMapping("/new")
     public String newSettingForm(Model model) {
         model.addAttribute("statuses", SettingStatus.values());
-        return "admin/settings-detail";
+        return ViewConstants.VIEW_ADMIN_SETTINGS_DETAIL;
     }
 
     @PostMapping
@@ -76,8 +79,8 @@ public class SettingsController {
                 .status(status)
                 .build();
         settingRepository.save(setting);
-        auditLogService.log("CREATE_SETTING", "Setting", type, "Value: " + value);
-        return "redirect:/admin/settings";
+        auditLogService.log(AuditAction.CREATE_SETTING.name(), "Setting", type, "Value: " + value);
+        return ViewConstants.REDIRECT_ADMIN_SETTINGS;
     }
 
     @PostMapping("/{id}")
@@ -91,8 +94,9 @@ public class SettingsController {
         setting.setDescription(description);
         setting.setStatus(status);
         settingRepository.save(setting);
-        auditLogService.log("UPDATE_SETTING", "Setting", setting.getId().toString(), "Updated by Admin");
-        return "redirect:/admin/settings/" + id;
+        auditLogService.log(AuditAction.UPDATE_SETTING.name(), "Setting", setting.getId().toString(),
+                "Updated by Admin");
+        return ViewConstants.REDIRECT_ADMIN_SETTINGS + "/" + id;
     }
 
     @PostMapping("/{id}/toggle-status")
@@ -100,8 +104,8 @@ public class SettingsController {
         Setting setting = settingRepository.findById(id).orElseThrow();
         setting.setStatus(setting.getStatus() == SettingStatus.ACTIVE ? SettingStatus.INACTIVE : SettingStatus.ACTIVE);
         settingRepository.save(setting);
-        auditLogService.log("TOGGLE_SETTING", "Setting", setting.getId().toString(),
+        auditLogService.log(AuditAction.TOGGLE_SETTING.name(), "Setting", setting.getId().toString(),
                 "New status: " + setting.getStatus());
-        return "redirect:/admin/settings";
+        return ViewConstants.REDIRECT_ADMIN_SETTINGS;
     }
 }

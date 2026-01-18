@@ -1,6 +1,11 @@
 package com.fa.training.controller;
 
+import com.fa.training.constant.SecurityConstants;
+import com.fa.training.constant.ViewConstants;
 import com.fa.training.entities.User;
+import com.fa.training.enums.AuditAction;
+import com.fa.training.message.ErrorMessages;
+import com.fa.training.message.SuccessMessages;
 import com.fa.training.repository.RoleRepository;
 import com.fa.training.repository.UserRepository;
 import com.fa.training.service.AuditLogService;
@@ -29,12 +34,12 @@ public class AuthController {
 
     @GetMapping("/login")
     public String login() {
-        return "login";
+        return ViewConstants.VIEW_LOGIN;
     }
 
     @GetMapping("/register")
     public String registerForm() {
-        return "register";
+        return ViewConstants.VIEW_REGISTER;
     }
 
     @PostMapping("/register")
@@ -42,12 +47,12 @@ public class AuthController {
             @RequestParam String email, @RequestParam String firstName,
             @RequestParam String lastName, Model model) {
         if (userRepository.findByUsername(username).isPresent()) {
-            model.addAttribute("error", "Username already exists!");
-            return "register";
+            model.addAttribute("error", ErrorMessages.USERNAME_EXISTS);
+            return ViewConstants.VIEW_REGISTER;
         }
         if (userRepository.findByEmail(email).isPresent()) {
-            model.addAttribute("error", "Email already exists!");
-            return "register";
+            model.addAttribute("error", ErrorMessages.EMAIL_EXISTS);
+            return ViewConstants.VIEW_REGISTER;
         }
 
         User user = User.builder()
@@ -56,28 +61,28 @@ public class AuthController {
                 .email(email)
                 .firstName(firstName)
                 .lastName(lastName)
-                .provider("LOCAL")
+                .provider(SecurityConstants.PROVIDER_LOCAL)
                 .verified(true)
                 .build();
 
         // Find or create ROLE_USER
-        roleRepository.findByName("ROLE_USER").ifPresent(user.getRoles()::add);
+        roleRepository.findByName(SecurityConstants.ROLE_USER).ifPresent(user.getRoles()::add);
 
         userRepository.save(user);
-        auditLogService.log("REGISTER", "User", username, "New user self-registered");
+        auditLogService.log(AuditAction.REGISTER.name(), "User", username, "New user self-registered");
 
-        model.addAttribute("message", "Registration successful! Please login.");
-        return "login";
+        model.addAttribute("message", SuccessMessages.REGISTRATION_SUCCESS);
+        return ViewConstants.VIEW_LOGIN;
     }
 
     @GetMapping("/reset-password")
     public String resetPasswordForm() {
-        return "reset-password";
+        return ViewConstants.VIEW_RESET_PASSWORD;
     }
 
     @PostMapping("/reset-password")
     public String handleResetPassword(@RequestParam String email, Model model) {
-        model.addAttribute("message", "Reset link sent (Simulation).");
-        return "reset-password";
+        model.addAttribute("message", SuccessMessages.RESET_LINK_SENT);
+        return ViewConstants.VIEW_RESET_PASSWORD;
     }
 }

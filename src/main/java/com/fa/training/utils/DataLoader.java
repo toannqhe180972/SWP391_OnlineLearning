@@ -1,6 +1,9 @@
 package com.fa.training.utils;
 
+import com.fa.training.constant.SecurityConstants;
 import com.fa.training.entities.*;
+import com.fa.training.enums.SettingStatus;
+import com.fa.training.enums.UserStatus;
 import com.fa.training.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,15 +43,15 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void initData() {
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN").orElseGet(() -> {
+        Role adminRole = roleRepository.findByName(SecurityConstants.ROLE_ADMIN).orElseGet(() -> {
             Role role = new Role();
-            role.setName("ROLE_ADMIN");
+            role.setName(SecurityConstants.ROLE_ADMIN);
             return roleRepository.save(role);
         });
 
-        Role userRole = roleRepository.findByName("ROLE_USER").orElseGet(() -> {
+        Role userRole = roleRepository.findByName(SecurityConstants.ROLE_USER).orElseGet(() -> {
             Role role = new Role();
-            role.setName("ROLE_USER");
+            role.setName(SecurityConstants.ROLE_USER);
             return roleRepository.save(role);
         });
 
@@ -60,7 +63,7 @@ public class DataLoader implements CommandLineRunner {
                     .lastName("Admin")
                     .email("admin@onlinelearning.com")
                     .verified(true)
-                    .provider("LOCAL")
+                    .provider(SecurityConstants.PROVIDER_LOCAL)
                     .status(UserStatus.ACTIVE)
                     .roles(new HashSet<>(Collections.singletonList(adminRole)))
                     .build();
@@ -75,7 +78,7 @@ public class DataLoader implements CommandLineRunner {
                     .lastName("User")
                     .email("user@onlinelearning.com")
                     .verified(true)
-                    .provider("LOCAL")
+                    .provider(SecurityConstants.PROVIDER_LOCAL)
                     .status(UserStatus.ACTIVE)
                     .roles(new HashSet<>(Collections.singletonList(userRole)))
                     .build();
