@@ -5,85 +5,86 @@
     <meta charset="UTF-8">
     <title>User Management - Admin</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 
-<body>
-    <header>
-        <div class="container nav">
-            <a th:href="@{/home}" class="logo">OnlineLearning</a>
-            <div class="nav-links">
-                <a th:href="@{/home}">Home</a>
-                <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
-                <a th:href="@{/admin/settings}" sec:authorize="hasRole('ADMIN')">Settings</a>
-                <a th:href="@{/admin/audit-logs}" sec:authorize="hasRole('ADMIN')">Audit Logs</a>
-                <a th:href="@{/profile}">Profile</a>
-                <form th:action="@{/logout}" method="post" style="display:inline;"><button type="submit"
-                        style="background:none;border:none;color:#4f46e5;cursor:pointer;font-weight:500;">Logout</button>
+<body class="admin-body">
+    <!-- Include Header -->
+    <header th:replace="~{fragments/admin-fragments :: header}"></header>
+
+    <div class="admin-wrapper">
+        <!-- Include Sidebar -->
+        <nav th:replace="~{fragments/admin-fragments :: sidebar}"></nav>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="dashboard-header">
+                <h1>User Management</h1>
+            </div>
+
+            <div class="filters">
+                <form th:action="@{/admin/users}" method="get" style="display:flex;gap:1rem;flex-wrap:wrap;width:100%;">
+                    <input type="text" name="search" th:value="${search}" placeholder="Search by name, email, mobile"
+                        style="flex:1;min-width:200px;">
+                    <select name="gender">
+                        <option value="">All Genders</option>
+                        <option th:value="'Male'" th:selected="${gender=='Male'}">Male</option>
+                        <option value="Female" th:selected="${gender=='Female'}">Female</option>
+                    </select>
+                    <select name="status">
+                        <option value="">All Status</option>
+                        <option th:each="s:${statuses}" th:value="${s}" th:text="${s}" th:selected="${s==status}">
+                        </option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a th:href="@{/admin/users/new}" class="btn btn-primary">Add New User</a>
                 </form>
             </div>
-        </div>
-    </header>
-    <main class="container">
-        <h2>User Management</h2>
-        <div class="filters">
-            <form th:action="@{/admin/users}" method="get" style="display:flex;gap:1rem;flex-wrap:wrap;width:100%;">
-                <input type="text" name="search" th:value="${search}" placeholder="Search by name, email, mobile"
-                    style="flex:1;min-width:200px;">
-                <select name="gender">
-                    <option value="">All Genders</option>
-                    <option th:value="'Male'" th:selected="${gender=='Male'}">Male</option>
-                    <option value="Female" th:selected="${gender=='Female'}">Female</option>
-                </select>
-                <select name="status">
-                    <option value="">All Status</option>
-                    <option th:each="s:${statuses}" th:value="${s}" th:text="${s}" th:selected="${s==status}"></option>
-                </select>
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a th:href="@{/admin/users/new}" class="btn btn-primary">Add New User</a>
-            </form>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th><a
-                            th:href="@{/admin/users(sortBy='id',sortDir=${sortDir=='asc'?'desc':'asc'}, gender=${gender}, status=${status}, search=${search})}">ID</a>
-                    </th>
-                    <th><a
-                            th:href="@{/admin/users(sortBy='firstName',sortDir=${sortDir=='asc'?'desc':'asc'}, gender=${gender}, status=${status}, search=${search})}">Full
-                            Name</a></th>
-                    <th>Gender</th>
-                    <th>Email</th>
-                    <th>Mobile</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="user : ${users}">
-                    <td th:text="${user.id}"></td>
-                    <td th:text="${user.fullName}"></td>
-                    <td th:text="${user.gender}"></td>
-                    <td th:text="${user.email}"></td>
-                    <td th:text="${user.phoneNumber}"></td>
-                    <td><span th:each="role:${user.roles}" th:text="${role.name}"></span></td>
-                    <td th:text="${user.status}"></td>
-                    <td>
-                        <a th:href="@{/admin/users/{id}(id=${user.id})}" class="btn btn-sm">View/Edit</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="pagination">
-            <a th:if="${users.hasPrevious()}"
-                th:href="@{/admin/users(page=${users.number-1},size=${users.size},sortBy=${sortBy},sortDir=${sortDir},gender=${gender},status=${status},search=${search})}"
-                class="btn">Previous</a>
-            <span>Page [[${users.number+1}]] of [[${users.totalPages}]]</span>
-            <a th:if="${users.hasNext()}"
-                th:href="@{/admin/users(page=${users.number+1},size=${users.size},sortBy=${sortBy},sortDir=${sortDir},gender=${gender},status=${status},search=${search})}"
-                class="btn">Next</a>
-        </div>
-    </main>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th><a
+                                th:href="@{/admin/users(sortBy='id',sortDir=${sortDir=='asc'?'desc':'asc'}, gender=${gender}, status=${status}, search=${search})}">ID</a>
+                        </th>
+                        <th><a
+                                th:href="@{/admin/users(sortBy='firstName',sortDir=${sortDir=='asc'?'desc':'asc'}, gender=${gender}, status=${status}, search=${search})}">Full
+                                Name</a></th>
+                        <th>Gender</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.fullName}"></td>
+                        <td th:text="${user.gender}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.phoneNumber}"></td>
+                        <td><span th:each="role:${user.roles}" th:text="${role.name}"></span></td>
+                        <td th:text="${user.status}"></td>
+                        <td>
+                            <a th:href="@{/admin/users/{id}(id=${user.id})}" class="btn btn-sm">View/Edit</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <a th:if="${users.hasPrevious()}"
+                    th:href="@{/admin/users(page=${users.number-1},size=${users.size},sortBy=${sortBy},sortDir=${sortDir},gender=${gender},status=${status},search=${search})}"
+                    class="btn">Previous</a>
+                <span>Page [[${users.number+1}]] of [[${users.totalPages}]]</span>
+                <a th:if="${users.hasNext()}"
+                    th:href="@{/admin/users(page=${users.number+1},size=${users.size},sortBy=${sortBy},sortDir=${sortDir},gender=${gender},status=${status},search=${search})}"
+                    class="btn">Next</a>
+            </div>
+        </main>
+    </div>
 </body>
 
 </html>

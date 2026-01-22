@@ -5,62 +5,61 @@
     <meta charset="UTF-8">
     <title>Setting Detail - Admin</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 
-<body>
-    <header>
-        <div class="container nav">
-            <a th:href="@{/home}" class="logo">OnlineLearning</a>
-            <div class="nav-links">
-                <a th:href="@{/home}">Home</a>
-                <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
-                <a th:href="@{/admin/settings}" sec:authorize="hasRole('ADMIN')">Settings</a>
-                <a th:href="@{/admin/audit-logs}" sec:authorize="hasRole('ADMIN')">Audit Logs</a>
-                <a th:href="@{/profile}">Profile</a>
-                <form th:action="@{/logout}" method="post" style="display:inline;"><button type="submit"
-                        style="background:none;border:none;color:#4f46e5;cursor:pointer;font-weight:500;">Logout</button>
+<body class="admin-body">
+    <!-- Include Header -->
+    <header th:replace="~{fragments/admin-fragments :: header}"></header>
+
+    <div class="admin-wrapper">
+        <!-- Include Sidebar -->
+        <nav th:replace="~{fragments/admin-fragments :: sidebar}"></nav>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="dashboard-header">
+                <h1 th:text="${setting != null ? 'Edit Setting' : 'Add New Setting'}"></h1>
+            </div>
+
+            <div class="dashboard-section">
+                <form th:action="${setting != null ? '/admin/settings/' + setting.id : '/admin/settings'}"
+                    method="post">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <input type="text" name="type" th:value="${setting != null ? setting.type : ''}"
+                            placeholder="e.g., SUBJECT_CATEGORY, POST_TYPE" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Value</label>
+                        <input type="text" name="value" th:value="${setting != null ? setting.value : ''}"
+                            placeholder="e.g., Programming, News" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Display Order</label>
+                        <input type="number" name="order" th:value="${setting != null ? setting.order : 1}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" rows="3"
+                            th:text="${setting != null ? setting.description : ''}"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select name="status" required>
+                            <option th:each="s:${statuses}" th:value="${s}" th:text="${s}"
+                                th:selected="${setting != null && setting.status == s}"></option>
+                        </select>
+                    </div>
+                    <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                        <button type="submit" class="btn btn-primary"
+                            th:text="${setting != null ? 'Update' : 'Create'}"></button>
+                        <a th:href="@{/admin/settings}" class="btn">Cancel</a>
+                    </div>
                 </form>
             </div>
-        </div>
-    </header>
-    <main class="container">
-        <div class="auth-card" style="max-width:600px;">
-            <h2 th:text="${setting != null ? 'Edit Setting' : 'Add New Setting'}"></h2>
-            <form th:action="${setting != null ? '/admin/settings/' + setting.id : '/admin/settings'}" method="post">
-                <div class="form-group">
-                    <label>Type</label>
-                    <input type="text" name="type" th:value="${setting != null ? setting.type : ''}"
-                        placeholder="e.g., SUBJECT_CATEGORY, POST_TYPE" required>
-                </div>
-                <div class="form-group">
-                    <label>Value</label>
-                    <input type="text" name="value" th:value="${setting != null ? setting.value : ''}"
-                        placeholder="e.g., Programming, News" required>
-                </div>
-                <div class="form-group">
-                    <label>Display Order</label>
-                    <input type="number" name="order" th:value="${setting != null ? setting.order : 1}" required>
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea name="description" rows="3"
-                        th:text="${setting != null ? setting.description : ''}"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Status</label>
-                    <select name="status" required>
-                        <option th:each="s:${statuses}" th:value="${s}" th:text="${s}"
-                            th:selected="${setting != null && setting.status == s}"></option>
-                    </select>
-                </div>
-                <div style="display:flex;gap:1rem;margin-top:1.5rem;">
-                    <button type="submit" class="btn btn-primary"
-                        th:text="${setting != null ? 'Update' : 'Create'}"></button>
-                    <a th:href="@{/admin/settings}" class="btn">Cancel</a>
-                </div>
-            </form>
-        </div>
-    </main>
+        </main>
+    </div>
 </body>
 
 </html>

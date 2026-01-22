@@ -8,22 +8,9 @@
 </head>
 
 <body>
-    <header>
-        <div class="container nav">
-            <a th:href="@{/home}" class="logo">OnlineLearning</a>
-            <div class="nav-links">
-                <a th:href="@{/home}">Home</a>
-                <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
-                <a th:href="@{/admin/settings}" sec:authorize="hasRole('ADMIN')">Settings</a>
-                <a th:href="@{/admin/audit-logs}" sec:authorize="hasRole('ADMIN')">Audit Logs</a>
-                <a th:href="@{/profile}">Profile</a>
-                <form th:action="@{/logout}" method="post" style="display:inline;">
-                    <button type="submit"
-                        style="background:none;border:none;color:#4f46e5;cursor:pointer;font-weight:500;">Logout</button>
-                </form>
-            </div>
-        </div>
-    </header>
+    <!-- Include Header -->
+    <header th:replace="~{fragments/common :: header}"></header>
+
     <main class="container">
         <div class="auth-card" style="max-width: 700px;">
             <h2>User Profile</h2>
@@ -39,12 +26,12 @@
             <div style="text-align: center; margin-bottom: 2rem;">
                 <img th:src="${user.avatarUrl != null ? user.avatarUrl : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}"
                     style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #4f46e5;">
-                <form th:action="@{/profile/avatar}" method="post" enctype="multipart/form-data"
+                <form id="avatarForm" th:action="@{/profile/avatar}" method="post" enctype="multipart/form-data"
                     style="margin-top: 1rem;">
                     <input type="file" name="avatar" accept="image/*" id="avatarInput" style="display: none;">
-                    <label for="avatarInput" class="btn btn-primary"
-                        style="cursor: pointer; display: inline-block;">Change Avatar</label>
-                    <button type="submit" class="btn" id="uploadBtn" style="display: none;">Upload</button>
+                    <label for="avatarInput" class="btn btn-primary" style="cursor: pointer; display: inline-block;"
+                        id="avatarLabel">Change Avatar</label>
+                    <span id="uploadingText" style="display: none; color: #64748b;">Uploading...</span>
                 </form>
                 <p style="color: #64748b; margin-top: 0.5rem;" th:text="${'Registered via: ' + user.provider}"></p>
             </div>
@@ -82,10 +69,18 @@
             </form>
         </div>
     </main>
+
+    <!-- Include Footer -->
+    <footer th:replace="~{fragments/common :: footer}"></footer>
+
     <script>
         document.getElementById('avatarInput').addEventListener('change', function () {
             if (this.files.length > 0) {
-                document.getElementById('uploadBtn').style.display = 'inline-block';
+                // Show uploading text and hide label
+                document.getElementById('avatarLabel').style.display = 'none';
+                document.getElementById('uploadingText').style.display = 'inline';
+                // Auto submit form
+                document.getElementById('avatarForm').submit();
             }
         });
     </script>

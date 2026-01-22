@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fragments</title>
+</head>
+
+<body>
+
+    <!-- Main Site Header Fragment -->
+    <header th:fragment="header">
+        <div class="container nav">
+            <a th:href="@{/home}" class="logo">OnlineLearning</a>
+            <div class="nav-links">
+                <a th:href="@{/home}">Home</a>
+                <a th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">Admin</a>
+
+                <span sec:authorize="isAuthenticated()">
+                    <a th:href="@{/profile}">Profile</a>
+                    <form th:action="@{/logout}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem;">Logout</button>
+                    </form>
+                </span>
+                <span sec:authorize="isAnonymous()">
+                    <a th:href="@{/login}" class="btn btn-primary">Login</a>
+                    <a th:href="@{/register}">Register</a>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Footer Fragment -->
+    <footer th:fragment="footer" style="background: #1e293b; color: #94a3b8; padding: 2rem 0; margin-top: 3rem;">
+        <div class="container" style="text-align: center;">
+            <p>© 2026 OnlineLearning Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

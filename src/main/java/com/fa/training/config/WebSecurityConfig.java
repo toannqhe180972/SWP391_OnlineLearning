@@ -66,7 +66,13 @@ public class WebSecurityConfig {
                                                 .permitAll())
                                 .rememberMe(remember -> remember
                                                 .key("uniqueAndSecret")
-                                                .tokenValiditySeconds(86400));
+                                                .tokenValiditySeconds(86400))
+                                .exceptionHandling(ex -> ex
+                                                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                                        // If user is trying to access admin without ADMIN role,
+                                                        // redirect to login
+                                                        response.sendRedirect("/login?error=access_denied");
+                                                }));
 
                 http.authenticationProvider(authenticationProvider());
 

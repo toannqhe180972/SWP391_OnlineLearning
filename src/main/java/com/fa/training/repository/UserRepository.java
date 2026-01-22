@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
         Optional<User> findByUsername(String username);
 
+        long countByStatus(UserStatus status);
+
         Optional<User> findByEmail(String email);
 
         @Query("SELECT DISTINCT u FROM User u LEFT JOIN u.roles r WHERE " +

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Role Management - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+
+<body class="admin-body">
+    <!-- Include Header -->
+    <header th:replace="~{fragments/admin-fragments :: header}"></header>
+
+    <div class="admin-wrapper">
+        <!-- Include Sidebar -->
+        <nav th:replace="~{fragments/admin-fragments :: sidebar}"></nav>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="dashboard-header">
+                <h1>Role Management</h1>
+                <p class="text-muted">Manage user roles and permissions</p>
+            </div>
+
+            <!-- Alerts -->
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <div class="filters">
+                <a th:href="@{/admin/roles/new}" class="btn btn-primary">Add New Role</a>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Role Name</th>
+                        <th>Description</th>
+                        <th>Users Count</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="role : ${roles}">
+                        <td th:text="${role.id}"></td>
+                        <td>
+                            <span th:text="${role.name}"
+                                th:class="${role.name == 'ROLE_ADMIN'} ? 'badge badge-admin' : 'badge badge-user'"></span>
+                        </td>
+                        <td th:text="${role.description ?: '-'}"></td>
+                        <td th:text="${role.users.size()}"></td>
+                        <td>
+                            <a th:href="@{/admin/roles/{id}(id=${role.id})}" class="btn btn-sm">View/Edit</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${roles.isEmpty()}">
+                        <td colspan="5" class="text-center text-muted">No roles found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <style>
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .badge-admin {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-user {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+    </style>
+</body>
+
+</html>

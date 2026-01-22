@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Fragments</title>
+</head>
+
+<body>
+
+    <!-- Admin Header Fragment -->
+    <header th:fragment="header" class="admin-header">
+        <div class="container nav">
+            <a th:href="@{/admin}" class="logo">OnlineLearning Admin</a>
+            <div class="nav-links">
+                <a th:href="@{/home}">Home</a>
+                <a th:href="@{/admin}">Dashboard</a>
+                <a th:href="@{/admin/users}">Users</a>
+                <a th:href="@{/admin/roles}">Roles</a>
+                <a th:href="@{/admin/settings}">Settings</a>
+                <a th:href="@{/admin/audit-logs}">Audit Logs</a>
+                <a th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn-logout">Logout</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Sidebar Fragment -->
+    <nav th:fragment="sidebar" class="admin-sidebar">
+        <div class="sidebar-header">
+            <a th:href="@{/admin}" class="sidebar-logo">
+                <span class="logo-icon">📚</span>
+                <span class="logo-text">Admin Panel</span>
+            </a>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a th:href="@{/admin}" th:classappend="${currentPage == 'dashboard'} ? 'active' : ''">
+                    <span class="menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/users}" th:classappend="${currentPage == 'users'} ? 'active' : ''">
+                    <span class="menu-icon">👥</span>
+                    <span>Users</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/settings}" th:classappend="${currentPage == 'settings'} ? 'active' : ''">
+                    <span class="menu-icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/roles}" th:classappend="${currentPage == 'roles'} ? 'active' : ''">
+                    <span class="menu-icon">🔐</span>
+                    <span>Roles</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a th:href="@{/admin/audit-logs}" th:classappend="${currentPage == 'audit-logs'} ? 'active' : ''">
+                    <span class="menu-icon">📋</span>
+                    <span>Audit Logs</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a th:href="@{/home}" class="back-to-site">
+                <span class="menu-icon">🏠</span>
+                <span>Back to Site</span>
+            </a>
+        </div>
+    </nav>
+
+</body>
+
+</html>

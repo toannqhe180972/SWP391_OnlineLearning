@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Role Detail - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+
+<body class="admin-body">
+    <!-- Include Header -->
+    <header th:replace="~{fragments/admin-fragments :: header}"></header>
+
+    <div class="admin-wrapper">
+        <!-- Include Sidebar -->
+        <nav th:replace="~{fragments/admin-fragments :: sidebar}"></nav>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="dashboard-header">
+                <h1 th:text="${role != null ? 'Edit Role' : 'Add New Role'}"></h1>
+            </div>
+
+            <!-- Alerts -->
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <div class="dashboard-section">
+                <form th:action="${role != null ? '/admin/roles/' + role.id : '/admin/roles'}" method="post">
+                    <div class="form-group">
+                        <label>Role Name</label>
+                        <input type="text" name="name" th:value="${role != null ? role.name : ''}"
+                            placeholder="e.g., ROLE_MODERATOR, ROLE_INSTRUCTOR" required
+                            th:readonly="${role != null && (role.name == 'ROLE_ADMIN' || role.name == 'ROLE_USER')}">
+                        <small style="color: #64748b;">Role name must start with ROLE_ (auto-added if missing)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" rows="3" placeholder="Description of this role..."
+                            th:text="${role != null ? role.description : ''}"></textarea>
+                    </div>
+
+                    <!-- Info for existing role -->
+                    <div th:if="${role != null}" class="info-box">
+                        <p><strong>Users with this role:</strong> <span th:text="${userCount}">0</span></p>
+                        <p th:if="${role.name == 'ROLE_ADMIN' || role.name == 'ROLE_USER'}" style="color: #f59e0b;">
+                            ⚠️ This is a system role and cannot be deleted.
+                        </p>
+                    </div>
+
+                    <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                        <button type="submit" class="btn btn-primary"
+                            th:text="${role != null ? 'Update Role' : 'Create Role'}"></button>
+                        <a th:href="@{/admin/roles}" class="btn">Cancel</a>
+
+                        <!-- Delete button for non-system roles -->
+                        <form th:if="${role != null && role.name != 'ROLE_ADMIN' && role.name != 'ROLE_USER'}"
+                            th:action="@{/admin/roles/{id}/delete(id=${role.id})}" method="post"
+                            style="margin-left: auto;"
+                            onsubmit="return confirm('Are you sure you want to delete this role?');">
+                            <button type="submit" class="btn btn-danger">Delete Role</button>
+                        </form>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+    </style>
+</body>
+
+</html>

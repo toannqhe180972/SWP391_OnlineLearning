@@ -5,86 +5,88 @@
     <meta charset="UTF-8">
     <title>Settings Management - Admin</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 
-<body>
-    <header>
-        <div class="container nav">
-            <a th:href="@{/home}" class="logo">OnlineLearning</a>
-            <div class="nav-links">
-                <a th:href="@{/home}">Home</a>
-                <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
-                <a th:href="@{/admin/settings}" sec:authorize="hasRole('ADMIN')">Settings</a>
-                <a th:href="@{/admin/audit-logs}" sec:authorize="hasRole('ADMIN')">Audit Logs</a>
-                <a th:href="@{/profile}">Profile</a>
-                <form th:action="@{/logout}" method="post" style="display:inline;"><button type="submit"
-                        style="background:none;border:none;color:#4f46e5;cursor:pointer;font-weight:500;">Logout</button>
+<body class="admin-body">
+    <!-- Include Header -->
+    <header th:replace="~{fragments/admin-fragments :: header}"></header>
+
+    <div class="admin-wrapper">
+        <!-- Include Sidebar -->
+        <nav th:replace="~{fragments/admin-fragments :: sidebar}"></nav>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="dashboard-header">
+                <h1>Settings Management</h1>
+            </div>
+
+            <div class="filters">
+                <form th:action="@{/admin/settings}" method="get"
+                    style="display:flex;gap:1rem;flex-wrap:wrap;width:100%;">
+                    <input type="text" name="search" th:value="${search}" placeholder="Search by value"
+                        style="flex:1;min-width:200px;">
+                    <input type="text" name="type" th:value="${type}" placeholder="Filter by type">
+                    <select name="status">
+                        <option value="">All Status</option>
+                        <option th:each="s:${statuses}" th:value="${s}" th:text="${s}" th:selected="${s==status}">
+                        </option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a th:href="@{/admin/settings/new}" class="btn btn-primary">Add New Setting</a>
                 </form>
             </div>
-        </div>
-    </header>
-    <main class="container">
-        <h2>Settings Management</h2>
-        <div class="filters">
-            <form th:action="@{/admin/settings}" method="get" style="display:flex;gap:1rem;flex-wrap:wrap;width:100%;">
-                <input type="text" name="search" th:value="${search}" placeholder="Search by value"
-                    style="flex:1;min-width:200px;">
-                <input type="text" name="type" th:value="${type}" placeholder="Filter by type">
-                <select name="status">
-                    <option value="">All Status</option>
-                    <option th:each="s:${statuses}" th:value="${s}" th:text="${s}" th:selected="${s==status}"></option>
-                </select>
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a th:href="@{/admin/settings/new}" class="btn btn-primary">Add New Setting</a>
-            </form>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th><a
-                            th:href="@{/admin/settings(sortBy='id',sortDir=${sortDir=='asc'?'desc':'asc'}, type=${type}, status=${status}, search=${search})}">ID</a>
-                    </th>
-                    <th><a
-                            th:href="@{/admin/settings(sortBy='type',sortDir=${sortDir=='asc'?'desc':'asc'}, type=${type}, status=${status}, search=${search})}">Type</a>
-                    </th>
-                    <th><a
-                            th:href="@{/admin/settings(sortBy='value',sortDir=${sortDir=='asc'?'desc':'asc'}, type=${type}, status=${status}, search=${search})}">Value</a>
-                    </th>
-                    <th><a
-                            th:href="@{/admin/settings(sortBy='order',sortDir=${sortDir=='asc'?'desc':'asc'}, type=${type}, status=${status}, search=${search})}">Order</a>
-                    </th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="setting : ${settings}">
-                    <td th:text="${setting.id}"></td>
-                    <td th:text="${setting.type}"></td>
-                    <td th:text="${setting.value}"></td>
-                    <td th:text="${setting.order}"></td>
-                    <td th:text="${setting.status}"></td>
-                    <td>
-                        <a th:href="@{/admin/settings/{id}(id=${setting.id})}" class="btn btn-sm">View/Edit</a>
-                        <form th:action="@{/admin/settings/{id}/toggle-status(id=${setting.id})}" method="post"
-                            style="display:inline;">
-                            <button type="submit" class="btn btn-sm"
-                                th:text="${setting.status.name() == 'ACTIVE' ? 'Deactivate' : 'Activate'}"></button>
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="pagination">
-            <a th:if="${settings.hasPrevious()}"
-                th:href="@{/admin/settings(page=${settings.number-1},size=${settings.size},sortBy=${sortBy},sortDir=${sortDir},type=${type},status=${status},search=${search})}"
-                class="btn">Previous</a>
-            <span>Page [[${settings.number+1}]] of [[${settings.totalPages}]]</span>
-            <a th:if="${settings.hasNext()}"
-                th:href="@{/admin/settings(page=${settings.number+1},size=${settings.size},sortBy=${sortBy},sortDir=${sortDir},type=${type},status=${status},search=${search})}"
-                class="btn">Next</a>
-        </div>
-    </main>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th><a
+                                th:href="@{/admin/settings(sortBy='id',sortDir=${sortDir=='asc'?'desc':'asc'}, type=${type}, status=${status}, search=${search})}">ID</a>
+                        </th>
+                        <th><a
+                                th:href="@{/admin/settings(sortBy='type',sortDir=${sortDir=='asc'?'desc':'asc'}, type=${type}, status=${status}, search=${search})}">Type</a>
+                        </th>
+                        <th><a
+                                th:href="@{/admin/settings(sortBy='value',sortDir=${sortDir=='asc'?'desc':'asc'}, type=${type}, status=${status}, search=${search})}">Value</a>
+                        </th>
+                        <th><a
+                                th:href="@{/admin/settings(sortBy='order',sortDir=${sortDir=='asc'?'desc':'asc'}, type=${type}, status=${status}, search=${search})}">Order</a>
+                        </th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="setting : ${settings}">
+                        <td th:text="${setting.id}"></td>
+                        <td th:text="${setting.type}"></td>
+                        <td th:text="${setting.value}"></td>
+                        <td th:text="${setting.order}"></td>
+                        <td th:text="${setting.status}"></td>
+                        <td>
+                            <a th:href="@{/admin/settings/{id}(id=${setting.id})}" class="btn btn-sm">View/Edit</a>
+                            <form th:action="@{/admin/settings/{id}/toggle-status(id=${setting.id})}" method="post"
+                                style="display:inline;">
+                                <button type="submit" class="btn btn-sm"
+                                    th:text="${setting.status.name() == 'ACTIVE' ? 'Deactivate' : 'Activate'}"></button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <a th:if="${settings.hasPrevious()}"
+                    th:href="@{/admin/settings(page=${settings.number-1},size=${settings.size},sortBy=${sortBy},sortDir=${sortDir},type=${type},status=${status},search=${search})}"
+                    class="btn">Previous</a>
+                <span>Page [[${settings.number+1}]] of [[${settings.totalPages}]]</span>
+                <a th:if="${settings.hasNext()}"
+                    th:href="@{/admin/settings(page=${settings.number+1},size=${settings.size},sortBy=${sortBy},sortDir=${sortDir},type=${type},status=${status},search=${search})}"
+                    class="btn">Next</a>
+            </div>
+        </main>
+    </div>
 </body>
 
 </html>
