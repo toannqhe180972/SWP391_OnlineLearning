@@ -7,7 +7,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -63,6 +65,10 @@ public class User {
     private String provider; // LOCAL, GOOGLE
     private LocalDateTime linkedAt;
 
+    private String registrationToken;
+    private String resetPasswordToken;
+    private LocalDateTime tokenExpiryDate;
+
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
@@ -72,6 +78,10 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    @Builder.Default
+    private List<Registration> registrations = new ArrayList<>();
 
     public String getFullName() {
         return firstName + " " + lastName;

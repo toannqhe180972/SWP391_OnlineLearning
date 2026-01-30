@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Slider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

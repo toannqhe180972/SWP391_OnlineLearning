@@ -86,17 +86,34 @@ public class DataLoader implements CommandLineRunner {
         }
 
         if (sliderRepository.count() == 0) {
-            Slider s1 = new Slider(null, "Welcome", "/images/slider1.jpg", "/subjects", "Active");
+            Slider s1 = Slider.builder()
+                    .title("Welcome")
+                    .image("/images/slider1.jpg")
+                    .backlink("/subjects")
+                    .status("Active")
+                    .build();
             sliderRepository.save(s1);
         }
 
         if (subjectRepository.count() == 0) {
-            Subject sub1 = new Subject(null, "Java", "/images/java.jpg", "Learn Java", "Expert content", true);
+            Subject sub1 = Subject.builder()
+                    .title("Java")
+                    .thumbnail("/images/java.jpg")
+                    .tagline("Learn Java")
+                    .description("Expert content")
+                    .featured(true)
+                    .build();
             subjectRepository.save(sub1);
         }
 
         if (postRepository.count() == 0) {
-            Post p1 = new Post(null, "News", "/images/news1.jpg", LocalDateTime.now(), "Content", true);
+            Post p1 = Post.builder()
+                    .title("News")
+                    .thumbnail("/images/news1.jpg")
+                    .postDate(LocalDateTime.now())
+                    .content("Content")
+                    .hot(true)
+                    .build();
             postRepository.save(p1);
         }
 
